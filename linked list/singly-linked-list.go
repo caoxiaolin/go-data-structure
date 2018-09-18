@@ -6,6 +6,7 @@ import (
     "fmt"
     "math/rand"
     "time"
+    "errors"
 )
 
 //结构定义
@@ -14,58 +15,104 @@ type LinkNode struct{
     Next *LinkNode
 }
 
-//初始化，生成头指针，头指针data存储链表长度
-func New() *LinkNode{
-    return &LinkNode{0, nil}
-}
-
 /*************   下面是链表的基本操作   ***********/
-//插入数据，指定位置和data
-func (head *LinkNode) Insert(i int, data int64) bool{
+//头插法创建链表，新节点始终在第一个位置，即head->next，返回链表头指针
+func CreateHead(n int) *LinkNode{
+    p := &LinkNode{0, nil}
+    for i:=0; i<n; i++{
+        q := &LinkNode{rand.Int63n(1000), p.Next}
+        p.Next = q
+    }
+    p.Data = int64(n)
+    return p
+}
+
+//尾插法创建链表，新节点始终在链表末尾，返回链表头指针
+func CreateTail(n int) *LinkNode{
+    p := &LinkNode{0, nil}
+    q := p
+    for i:=0; i<n; i++{
+        q.Next = &LinkNode{rand.Int63n(1000), nil}
+        q = q.Next
+    }
+    p.Data = int64(n)
+    return p
+}
+
+//插入数据，指定位置和data，查找位置O(n)，插入操作O(1)
+func (head *LinkNode) Insert(i int, data int64) error{
+    if i < 1 || i > int(head.Data) + 1{
+        return errors.New(fmt.Sprintf("The location to insert does not exist, location is %d\n", i))
+    }
     p := head
     j := 1
     for p.Next != nil && j < i {
         p = p.Next
         j++
     }
-    n := new(LinkNode)
-    n.Data = data
-    n.Next = p.Next
-    p.Next = n
+    if p.Next == nil && j > i{
+        return errors.New(fmt.Sprintf("The location to insert does not exist, location is %d\n", i))
+    }
+    q := &LinkNode{data, p.Next}
+    p.Next = q
     head.Data++
-    return true
+    return nil
 }
 
-//获取指定的元素
-func (head *LinkNode) GetElem(i int) int64{
-    p := head
-    for p.Next != nil{
-        if i == 0 {
-              return p.Data
+//获取指定的元素，O(n)
+func (head *LinkNode) GetElem(i int) (int64, error){
+    err := errors.New("Element is not exists")
+    if i < 1 || i > int(head.Data){
+        return 0, err
+    }
+    p := head.Next
+    j := 1
+    for p != nil && j <= i{
+        if j == i {
+              return p.Data, nil
         }
-        i--
+        j++
         p = p.Next
     }
-    return -1
+    return 0, err
 }
 
-//删除数据，指定位置
-func (head *LinkNode) Delete(i int) bool{
+//删除数据，指定位置，查找位置O(n)，删除操作O(1)
+func (head *LinkNode) Delete(i int) (int64, error){
     if i < 1 || i > int(head.Data){
-        return false
+        return 0, errors.New(fmt.Sprintf("Element %d is not exists\n", i))
     }
     p := head
     j := 1
-    for p.Next != nil && j < i {
+    for p != nil && j < i {
         p = p.Next
         j++
     }
-    p.Next = p.Next.Next
+    q := p.Next
+    p.Next = q.Next
     head.Data--
+    return q.Data, nil
+}
+
+//链表反转，O(n)
+func (head *LinkNode) Reverse() bool{
+    p := head.Next
+    q, pn := p, p
+    for p != nil{
+        pn = p.Next
+        if p == head.Next{
+            p.Next = nil
+        }else{
+            p.Next = q
+        }
+        q = p
+        p = pn
+    }
+    head.Next = q
     return true
 }
 
-//数据交换，指定两个位置
+//数据交换，指定两个位置，查找位置O(n)，交换操作O(1)
 func (head *LinkNode) Swap(i, j int) bool{
     if i == j || i > int(head.Data) || j > int(head.Data){
         return false
@@ -96,49 +143,6 @@ func (head *LinkNode) Swap(i, j int) bool{
     return true
 }
 
-//数据交换，指定两个位置
-func (head *LinkNode) Swap1(i, j int) bool{
-    if i == j || i > int(head.Data) || j > int(head.Data){
-        return false
-    }
-    p := head
-    pi, pj := p, p
-    n := 1
-    for n <= i || n <= j{
-        p = p.Next
-        if n == i{
-            pi = p
-        }
-        if n == j{
-            pj = p
-        }
-        n++
-    }
-    head.Delete(i)
-    head.Insert(i, pj.Data)
-    head.Delete(j)
-    head.Insert(j, pi.Data)
-    return true
-}
-
-//链表反转
-func (head *LinkNode) Reverse() bool{
-    p := head.Next
-    q, pn := p, p
-    for p != nil{
-        pn = p.Next
-        if p == head.Next{
-            p.Next = nil
-        }else{
-            p.Next = q
-        }
-        q = p
-        p = pn
-    }
-    head.Next = q
-    return true
-}
-
 //遍历链表
 func (head *LinkNode) Traversal() {
     p := head.Next
@@ -152,8 +156,28 @@ func (head *LinkNode) Traversal() {
 
 /***********   下面是链表的排序   **********/
 //冒泡排序
-func (head *LinkNode) Sort(){
-
+func (head *LinkNode) BubbleSort() bool{
+    p := head
+    var q *LinkNode
+    q = nil
+    if p.Next == nil || p.Next.Next == nil{
+        return false
+    }
+    for p.Next != q{
+        for p.Next.Next != q{
+            if p.Next.Data > p.Next.Next.Data{
+                x := p.Next
+                y := p.Next.Next
+                p.Next = y
+				x.Next = y.Next
+                y.Next = x
+            }
+            p = p.Next
+        }
+        q = p.Next
+        p = head
+    }
+    return true
 }
 
 /***********   链表排序操作结束   **********/
@@ -164,21 +188,41 @@ func init(){
 
 
 func main(){
-    newLinkNode := New()
-    for n := 1; n <= 3; n++ {
-        newLinkNode.Insert(1, rand.Int63n(1000))
+    newLinkNode := CreateHead(10)
+    newLinkNode.Traversal()
+    fmt.Printf("%d\n", newLinkNode.Data)
+    newLinkNode = CreateTail(10)
+    newLinkNode.Traversal()
+    fmt.Printf("%d\n", newLinkNode.Data)
+    err1 := newLinkNode.Insert(1, 100)
+    if err1 != nil{
+        fmt.Print(err1)
+    }
+    newLinkNode.Traversal()
+    fmt.Printf("%d\n", newLinkNode.Data)
+
+    elem2, err2 := newLinkNode.GetElem(12)
+    if err2 != nil{
+        fmt.Println(err2)
+    }else{
+        fmt.Printf("get %d\n", elem2)
     }
 
-    newLinkNode.Traversal()
-
-    newLinkNode.Swap(1, 3)
-    newLinkNode.Traversal()
-
-    newLinkNode.Delete(5)
+    elem3, err3 := newLinkNode.Delete(1)
+    if err3 != nil{
+        fmt.Println(err3)
+    }else{
+        fmt.Printf("delete %d\n", elem3)
+    }
     newLinkNode.Traversal()
 
     newLinkNode.Reverse()
     newLinkNode.Traversal()
 
-    fmt.Printf("%d\n", newLinkNode.GetElem(2))
+    newLinkNode.Swap(1, 1)
+    newLinkNode.Traversal()
+
+    fmt.Println("############## 排序 ###############")
+    newLinkNode.BubbleSort()
+    newLinkNode.Traversal()
 }
