@@ -11,8 +11,8 @@ import (
 
 //结构定义
 type LinkNode struct {
-	Data int64
-	Next *LinkNode
+	Data int64		//数据域
+	Next *LinkNode	//指针域
 }
 
 /*************   下面是链表的基本操作   ***********/
