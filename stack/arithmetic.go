@@ -40,10 +40,11 @@ func (a *Arithmetic) Format(){
 }
 
 //转为逆波兰表达式（后缀表达式）
-//规则：顺序遍历，数字输出，符号则判断与栈顶符号的优先级，右括号或优先级低于栈顶符号
+//规则：顺序遍历，数字输出，符号则判断与栈顶符号的优先级，右括号或优先级不高于栈顶符号
 //栈顶元素依次出栈，遇左括号停止，当前符号进栈，最后都出栈
 func (a *Arithmetic) RPN(){
     if a.Input != ""{
+        a.Format()
         stack := InitStack()
         for _, s := range a.MiddleExpression{
             //fmt.Printf("当前 s = %v\n", s)
@@ -51,8 +52,13 @@ func (a *Arithmetic) RPN(){
             _, err := strconv.Atoi(s)
             if err != nil{  //转换失败
                     top, _ := stack.GetTop()
+                    //s为"("时，直接入栈
+                    if s == "("{
+                        stack.Push(s)
+                        continue
+                    }
                     //s为右括号，或者s运算符的优先级不高于栈顶运算符优先级
-                    for top != nil && (s == ")" || a.Priority(top.(string), s)){
+                    for top != nil && (s == ")" || top.(string) == "*" || top.(string) == "/"){
                         //栈顶元素开始出栈，直到"("出栈为止
                         e, _ := stack.Pop()
                         v, _ := e.(string)
@@ -83,6 +89,7 @@ func (a *Arithmetic) RPN(){
 //计算最终结果
 func (a *Arithmetic) CalcResult() float64{
     if a.Input != ""{
+        a.RPN()
         stack := InitStack()
         for _, s := range a.SuffixExpression{
             val, err := strconv.ParseFloat(s, 64)
@@ -98,14 +105,6 @@ func (a *Arithmetic) CalcResult() float64{
         return res.(float64)
     }
     return 0
-}
-
-//判断运算符的优先级
-func (a *Arithmetic) Priority(x, y string) bool{
-    if (x != "(" && x != ")") && (y == "+" || y == "-"){
-        return true
-    }
-    return false
 }
 
 //判断是否数字
@@ -135,12 +134,6 @@ func (a *Arithmetic) Calc(x float64, y float64, o string) (res float64){
 
 func main(){
     a := new(Arithmetic)
-    a.Input = "29+(13-1)*3+17/2"
-    //a.Input = "1+2*(4-3)/5*((7-6)/8*9)"
-    a.Format()
-    fmt.Printf("%+v\n", a.MiddleExpression)
-    a.RPN()
-    fmt.Printf("%+v\n", a.SuffixExpression)
-    fmt.Printf("Result = %f\n", a.CalcResult())
-
+    a.Input = "11+2*(42-3)/5*((7-6)/8*9)"
+    fmt.Printf("%s = %f\n", a.MiddleExpression, a.CalcResult())
 }
