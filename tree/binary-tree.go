@@ -13,6 +13,7 @@ type BinaryTree struct {
 	Rnode *BinaryTree
 }
 
+//辅助构造二叉树
 var str []byte
 
 //构造二叉树，前序构建
@@ -31,7 +32,7 @@ func Build(s []byte) *BinaryTree {
 	return &t
 }
 
-//先序遍历
+//前序遍历
 func (bt *BinaryTree) Preorder() {
 	if bt == nil {
 		return
