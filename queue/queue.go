@@ -1,6 +1,6 @@
 //队列，顺序存储
 
-package main
+package queue
 
 import (
 	"errors"
@@ -38,9 +38,9 @@ func (s *Queue) Out() (interface{}, error) {
 	if s.Rear == -1 {
 		return nil, errors.New("Queue is empty")
 	}
-	r := s.Data[0]  //队首元素
+	r := s.Data[0] //队首元素
 	//后序元素依次向前移动1位
-	for i:=0; i<s.Rear; i++{
+	for i := 0; i < s.Rear; i++ {
 		s.Data[i] = s.Data[i+1]
 	}
 	s.Data[s.Rear] = nil
@@ -65,11 +65,13 @@ func (s *Queue) Print() {
 	fmt.Println()
 }
 
-func main() {
+func Example() {
 	queue := InitQueue()
 	for i := 1; i <= 10; i++ {
 		queue.Enter(i)
 	}
+	fmt.Println("初始化队列：")
+	queue.Print()
 	err1 := queue.Enter(11)
 	if err1 != nil {
 		fmt.Println(err1)

@@ -1,6 +1,6 @@
 //栈，顺序存储
 
-package main
+package stack
 
 import (
 	"errors"

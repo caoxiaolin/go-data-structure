@@ -1,5 +1,5 @@
 //栈的应用，加减乘除四则运算，逆波兰
-package main
+package stack
 
 import (
 	"fmt"
@@ -134,7 +134,7 @@ func (a *Arithmetic) Calc(x float64, y float64, o string) (res float64) {
 	return
 }
 
-func main() {
+func Arith() {
 	a := new(Arithmetic)
 	a.Input = "11+2*(42-3)/5*((7-6)/8*9)"
 	fmt.Printf("%s = %f\n", a.MiddleExpression, a.CalcResult())

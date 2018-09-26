@@ -1,6 +1,6 @@
 //单链表
 
-package main
+package linkedlist
 
 import (
 	"errors"
@@ -18,6 +18,7 @@ type LinkNode struct {
 /*************   下面是链表的基本操作   ***********/
 //头插法创建链表，新节点始终在第一个位置，即head->next，返回链表头指针
 func CreateHead(n int) *LinkNode {
+	fmt.Println("#头插法创建链表：")
 	p := &LinkNode{0, nil}
 	for i := 0; i < n; i++ {
 		q := &LinkNode{rand.Int63n(1000), p.Next}
@@ -29,6 +30,7 @@ func CreateHead(n int) *LinkNode {
 
 //尾插法创建链表，新节点始终在链表末尾，返回链表头指针
 func CreateTail(n int) *LinkNode {
+	fmt.Println("#尾插法创建链表：")
 	p := &LinkNode{0, nil}
 	q := p
 	for i := 0; i < n; i++ {
@@ -41,6 +43,7 @@ func CreateTail(n int) *LinkNode {
 
 //插入数据，指定位置和data，查找位置O(n)，插入操作O(1)
 func (head *LinkNode) Insert(i int, data int64) error {
+	fmt.Printf("#在第 %d 个位置插入 %d：\n", i, data)
 	if i < 1 || i > int(head.Data)+1 {
 		return errors.New(fmt.Sprintf("The location to insert does not exist, location is %d\n", i))
 	}
@@ -61,6 +64,7 @@ func (head *LinkNode) Insert(i int, data int64) error {
 
 //获取指定的元素，O(n)
 func (head *LinkNode) GetElem(i int) (int64, error) {
+	fmt.Printf("#获取第 %d 个元素：\n", i)
 	err := errors.New("Element is not exists")
 	if i < 1 || i > int(head.Data) {
 		return 0, err
@@ -79,6 +83,7 @@ func (head *LinkNode) GetElem(i int) (int64, error) {
 
 //删除数据，指定位置，查找位置O(n)，删除操作O(1)
 func (head *LinkNode) Delete(i int) (int64, error) {
+	fmt.Printf("#删除第 %d 个元素：\n", i)
 	if i < 1 || i > int(head.Data) {
 		return 0, errors.New(fmt.Sprintf("Element %d is not exists\n", i))
 	}
@@ -96,6 +101,7 @@ func (head *LinkNode) Delete(i int) (int64, error) {
 
 //链表反转，O(n)
 func (head *LinkNode) Reverse() bool {
+	fmt.Println("#链表反转：")
 	p := head.Next
 	q, pn := p, p
 	for p != nil {
@@ -114,6 +120,7 @@ func (head *LinkNode) Reverse() bool {
 
 //数据交换，指定两个位置，查找位置O(n)，交换操作O(1)
 func (head *LinkNode) Swap(i, j int) bool {
+	fmt.Printf("#交换第 %d 位和 %d 位的元素：\n", i, j)
 	if i == j || i > int(head.Data) || j > int(head.Data) {
 		return false
 	}
@@ -158,6 +165,7 @@ func (head *LinkNode) Traversal() {
 /***********   下面是链表的排序   **********/
 //冒泡排序
 func (head *LinkNode) BubbleSort() bool {
+	fmt.Println("#冒泡排序：")
 	p := head
 	var q *LinkNode
 	q = nil
@@ -187,21 +195,18 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func main() {
+func Example() {
 	newLinkNode := CreateHead(10)
 	newLinkNode.Traversal()
-	fmt.Printf("%d\n", newLinkNode.Data)
 	newLinkNode = CreateTail(10)
 	newLinkNode.Traversal()
-	fmt.Printf("%d\n", newLinkNode.Data)
-	err1 := newLinkNode.Insert(1, 100)
+	err1 := newLinkNode.Insert(3, 100)
 	if err1 != nil {
 		fmt.Print(err1)
 	}
 	newLinkNode.Traversal()
-	fmt.Printf("%d\n", newLinkNode.Data)
 
-	elem2, err2 := newLinkNode.GetElem(12)
+	elem2, err2 := newLinkNode.GetElem(7)
 	if err2 != nil {
 		fmt.Println(err2)
 	} else {
@@ -219,10 +224,9 @@ func main() {
 	newLinkNode.Reverse()
 	newLinkNode.Traversal()
 
-	newLinkNode.Swap(1, 1)
+	newLinkNode.Swap(2, 6)
 	newLinkNode.Traversal()
 
-	fmt.Println("############## 排序 ###############")
 	newLinkNode.BubbleSort()
 	newLinkNode.Traversal()
 }
