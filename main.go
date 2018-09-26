@@ -13,6 +13,7 @@ func main() {
 	linkedlist.Example()
 	fmt.Println("####################  队列  #####################")
 	queue.Example()
+	queue.Example1()
 	fmt.Println("####################  堆栈  #####################")
 	stack.Example()
 	stack.Arith()

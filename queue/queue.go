@@ -59,6 +59,9 @@ func (s *Queue) IsEmpty() bool {
 
 //输出队列
 func (s *Queue) Print() {
+	if s.Rear == -1 {
+		return
+	}
 	for i := 0; i <= s.Rear; i++ {
 		fmt.Printf("%v\t", s.Data[i])
 	}
