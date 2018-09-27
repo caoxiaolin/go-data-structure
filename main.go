@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/caoxiaolin/go-data-structure/leetcode"
 	"github.com/caoxiaolin/go-data-structure/linked-list"
 	"github.com/caoxiaolin/go-data-structure/queue"
 	"github.com/caoxiaolin/go-data-structure/stack"
@@ -11,6 +12,7 @@ import (
 func main() {
 	fmt.Println("####################  链表  #####################")
 	linkedlist.Example()
+	linkedlist.DoublyLinkedListExample()
 	fmt.Println("####################  队列  #####################")
 	queue.Example()
 	queue.Example1()
@@ -19,4 +21,7 @@ func main() {
 	stack.Arith()
 	fmt.Println("####################  树  #####################")
 	btree.Example()
+
+	leetcode.TestCycle()
+	leetcode.TestPartition()
 }
