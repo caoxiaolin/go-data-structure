@@ -25,4 +25,6 @@ func main() {
 	leetcode.TestCycle()
 	leetcode.TestPartition()
 	leetcode.TestReverseBetween()
+	leetcode.TestMergeTowLists()
+	leetcode.TestGetIntersectionNode()
 }
